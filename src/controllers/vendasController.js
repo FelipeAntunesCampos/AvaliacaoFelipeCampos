@@ -110,7 +110,7 @@ const createDadosVendas = (req, res) => {
         });
     };
 
-    if (desconto => valorTotal) {
+    if (valorTotal < desconto ) {
         return res.status(400).json({
             success: false,
             message: "O campo 'desconto' tem que ser menor que o valor da venda!"
