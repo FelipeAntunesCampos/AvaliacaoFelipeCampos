@@ -40,7 +40,21 @@ const createDadosVendas = (req, res) => {
         message: "Produto, Cliente, ValorTotal, Vendedor, Desconto são obrigatorios para uma venda!",
       });
     }
-  
+    
+    if (quantidade <= 0) {
+        return res.status(400).json({
+            success: false,
+            message: "O campo 'quantidade' tem que ser maior que 0!"
+        });
+    };
+
+    if (desconto => valorTotal) {
+        return res.status(400).json({
+            success: false,
+            message: "O campo 'desconto' tem que ser menor que o valor da venda!"
+        });
+    }
+
     // Criar nova venda
     const novoDadosVenda = {
       id: dadosVendas.length + 1,
@@ -63,7 +77,26 @@ const createDadosVendas = (req, res) => {
     });
   };
 
+const deleteDadosVendas = (req, res) => {
+    let id = parseInt(req.params.id);
+    const dadosVendasRemover = dadosVendas.find(v => v.id === id);
 
-export { getAllVendas, getById, createDadosVendas };
+    if (!dadosVendasRemover) {
+        return res.status(404).json({
+            success: false,
+            message: 'Este dado de venda não existe'
+        });
+    };
+    const dadosVendasFiltrados = dadosVendas.filter(dadosVenda => dadosVenda.id !== id);
+    dadosVendas.splice(0, dadosVendas.length, ...dadosVendasFiltrados);
+    res.status(200).json({
+        success: true,
+        message: 'Dados de venda deletado com sucesso',
+        VendaRemovida: dadosVendasRemover
+    });
+  };
+  
+
+export { getAllVendas, getById, createDadosVendas, deleteDadosVendas };
 
 
