@@ -1,6 +1,6 @@
 import express from "express";
 import dotenv from "dotenv";
-import cartasRoutes from "./src/routes/cartasRoutes.js";
+//import cartasRoutes from "./src/routes/cartasRoutes.js";
 
 const app = express();
 app.use(express.json());
@@ -12,7 +12,7 @@ app.get("/", (req,res)=> {
     res.send("servidor funcionando")
 });
 
-app.use("/cartas", cartasRoutes);
+app.use("/", );
 
 app.listen(serverPort, () => {
     console.log(`servidor rodando em http://localhost:${serverPort}`);
