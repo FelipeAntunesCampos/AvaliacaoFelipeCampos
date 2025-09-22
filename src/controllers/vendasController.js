@@ -3,83 +3,74 @@ const { dadosVendas } = dados;
 
 //GetAll
 const getAllVendas = (req, res) => {
-      const { produto, valorTotal, dataVenda, vendedor  } = req.query;
-  let resultado = dadosVendas;
-  console.log(resultado);
-
-  // Filtro por produto (busca parcial)
-  if (produto) {
-    resultado = resultado.filter((dadoVenda) =>
-      dadoVenda.produto.toLowerCase().includes(produto.toLowerCase())
-    );
-  }
-
-  // Filtro por vendedor
-  if (vendedor) {
-    resultado = resultado.filter(
-      (dadosVenda) => dadosVenda.vendedor.toLowerCase() === vendedor.toLowerCase()
-    );
-  }
-
-  const hoje = new Date(); 
-  const dataSeteDiasAtras = new Date();
-  dataSeteDiasAtras.setDate(hoje.getDate() - 7);
+    const { produto, valorTotal, dataVenda, vendedor } = req.query;
+    let resultado = dadosVendas;
   
-  const dataMes = new Date();
-  dataMes.setDate(hoje.getDate() -30)
-
-  const dataSemestre = new Date();
-  dataSemestre.setDate(hoje.getDate() -90)
-  
-
-  // Filtro por data de venda
-  if (dataVenda) {
-    //filtro nos ultimos 7 dias
-    if (dataVenda <= hoje && dataVenda > dataSeteDiasAtras) {
-        resultado = resultado.find(
-            (dadosVenda) => dadosVenda.dataVenda === dataVenda
-          );
-    };
-
-    //filtro nos ultimos 30 dias
-    if (dataVenda < hoje && dataVenda < dataMes) {
-        resultado = resultado.find(
-            (dadosVenda) => dadosVenda.dataVenda === dataVenda
-          );
-    };
-
-    //filtro nos ultimos 90 dias
-    if (dataVenda < hoje && dataVenda < dataSemestre) {
-        resultado = resultado.find(
-            (dadosVenda) => dadosVenda.dataVenda === dataVenda
-          );
-    };
-  };
-
-  if (valorTotal) {
-    //se o valor total for menor ou igual a 100
-    if (valorTotal <= 100) {
-        resultado = resultado.find(
-        (dadosVenda) => dadosVenda.valorTotal === valorTotal);
-    };
-    //se o valor total for entre 100 e 500
-    if (valorTotal => 100 && valorTotal <= 500) {
-        resultado = resultado.find(
-        (dadosVenda) => dadosVenda.valorTotal === valorTotal);
-    };
-    //se o valor for maor que 500
-    if (valorTotal > 500) {
-        resultado = resultado.find(
-        (dadosVenda) => dadosVenda.valorTotal === valorTotal);
+    if (produto) {
+      resultado = resultado.filter((dado) =>
+        dado.produto.toLowerCase().includes(produto.toLowerCase())
+      );
     }
-  }
-
-  res.status(200).json({
-    total: resultado.length,
-    dadosDeVendas: resultado,
-  });
-};
-
+  
+    if (vendedor) {
+      resultado = resultado.filter(
+        (d) => d.vendedor.toLowerCase() === vendedor.toLowerCase()
+      );
+    }
+    
+    //filtro por data de venda
+    if (dataVenda) {
+      const hoje = new Date();
+      const dataSeteDiasAtras = new Date();
+      dataSeteDiasAtras.setDate(hoje.getDate() - 7);
+  
+      const dataMes = new Date();
+      dataMes.setDate(hoje.getDate() - 30);
+  
+      const dataSemestre = new Date();
+      dataSemestre.setDate(hoje.getDate() - 90);
+  
+      const dataVendaReq = new Date(dataVenda);
+  
+      // últimos 7 dias
+      if (dataVendaReq >= dataSeteDiasAtras && dataVendaReq <= hoje) {
+        resultado = resultado.filter(
+          (d) => new Date(d.dataVenda).toDateString() === dataVendaReq.toDateString()
+        );
+      }
+  
+      // últimos 30 dias
+      else if (dataVendaReq >= dataMes && dataVendaReq <= hoje) {
+        resultado = resultado.filter(
+          (d) => new Date(d.dataVenda).toDateString() === dataVendaReq.toDateString()
+        );
+      }
+  
+      // últimos 90 dias
+      else if (dataVendaReq >= dataSemestre && dataVendaReq <= hoje) {
+        resultado = resultado.filter(
+          (d) => new Date(d.dataVenda).toDateString() === dataVendaReq.toDateString()
+        );
+      }
+    }
+  
+    if (valorTotal) {
+      const valor = Number(valorTotal);
+      if (valor <= 100) {
+        resultado = resultado.filter((d) => d.valorTotal <= 100);
+      } else if (valor > 100 && valor <= 500) {
+        resultado = resultado.filter((d) => d.valorTotal > 100 && d.valorTotal <= 500);
+      } else if (valor > 500) {
+        resultado = resultado.filter((d) => d.valorTotal > 500);
+      }
+    }
+  
+    res.status(200).json({
+      total: resultado.length,
+      dadosDeVendas: resultado,
+    });
+  };
+  
 //GetById
 const getById = (req, res) => {
     let id = parseInt(req.params.id);
