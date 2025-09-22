@@ -53,7 +53,7 @@ const createDadosVendas = (req, res) => {
             success: false,
             message: "O campo 'desconto' tem que ser menor que o valor da venda!"
         });
-    }
+    };
 
     // Criar nova venda
     const novoDadosVenda = {
@@ -95,8 +95,71 @@ const deleteDadosVendas = (req, res) => {
         VendaRemovida: dadosVendasRemover
     });
   };
+
+const updateDadosVendas = (req, res) => {
+    const id = parseInt(req.params.id);
+
+    const { produto, cliente, quantidade, valorTotal, dataVenda, desconto, vendedor } = req.body;
+
+    if (isNaN(id)) {
+        return res.status(400).json({
+            success: false,
+            message: "O id de venda deve ser um número válido"
+        })
+    }
+
+    if (quantidade <= 0) {
+        return res.status(400).json({
+            success: false,
+            message: "O campo 'quantidade' tem que ser maior que 0!"
+        });
+    };
+
+    if (valorTotal <= desconto) {
+        return res.status(400).json({
+            success: false,
+            message: "O campo 'desconto' tem que ser menor que o valor da venda!"
+        });
+    };
+
+    const dadosVendasExiste = dadosVendas.find(dadoVenda => dadoVenda.id === id);
+
+    if (!dadosVendasExiste) {
+        return res.status(400).json({
+            success: false,
+            message: "Dados de venda não existe."
+        })
+    }
+   
+
+    const dadosVendasAtualizados = dadosVendas.map(dadoVenda => {
+        return dadoVenda.id === id
+            ? {
+                ...dadoVenda,
+                ...(produto      && { produto }),
+                ...(cliente    && { cliente }),
+                ...(quantidade  && { quantidade }),
+                ...(valorTotal      && { valorTotal }),
+                ...(vendedor      && { vendedor }),
+                ...(desconto  && { desconto }),
+                ...(dataVenda && new Date(dataVenda) >= new Date() && { dataVenda })
+            }
+            : dadoVenda;
+    });
+    
+    dadosVendas.splice(0, dadosVendas.length, ...dadosVendasAtualizados);
+
+    const dadosVendaNovo = dadosVendas.find(dadoVenda => dadoVenda.id === id);
+
+    res.status(200).json({
+        success: true,
+        message: "Dados de vendas atualizados com sucesso",
+        DadosVendaAtualizado: dadosVendaNovo
+    });
+};
+
   
 
-export { getAllVendas, getById, createDadosVendas, deleteDadosVendas };
+export { getAllVendas, getById, createDadosVendas, deleteDadosVendas, updateDadosVendas };
 
 
