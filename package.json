@@ -1,7 +1,7 @@
 {
   "name": "padrao-mvc",
   "version": "1.0.0",
-  "description": "API do Toy Story MVC",
+  "description": "Atividade Avaliativa",
   "main": "server.js",
   "type": "module",
   "scripts": {

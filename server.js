@@ -1,18 +1,18 @@
 import express from "express";
 import dotenv from "dotenv";
-//import cartasRoutes from "./src/routes/cartasRoutes.js";
+import vendasRoutes from "./src/routes/vendasRoutes.js";
 
 const app = express();
 app.use(express.json());
 
 dotenv.config();
-const serverPort = process.env.PORT || 4005;
+const serverPort = process.env.PORT || 3001;
 
 app.get("/", (req,res)=> {
     res.send("servidor funcionando")
 });
 
-app.use("/", );
+app.use("/dadosVendas", vendasRoutes);
 
 app.listen(serverPort, () => {
     console.log(`servidor rodando em http://localhost:${serverPort}`);
